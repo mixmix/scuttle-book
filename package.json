@@ -1,0 +1,30 @@
+{
+  "name": "scuttle-book",
+  "version": "0.0.1",
+  "description": "a scuttlebutt helper for all book related messages",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape **/*.test.js | tap-spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mixmix/scuttle-book.git"
+  },
+  "keywords": [
+    "scuttlebutt",
+    "books"
+  ],
+  "author": "mixmix",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mixmix/scuttle-book/issues"
+  },
+  "homepage": "https://github.com/mixmix/scuttle-book#readme",
+  "dependencies": {
+    "is-my-json-valid": "^2.17.1"
+  },
+  "devDependencies": {
+    "tap-spec": "^4.1.1",
+    "tape": "^4.8.0"
+  }
+}

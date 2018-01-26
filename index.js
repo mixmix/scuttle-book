@@ -9,18 +9,18 @@ const methods = {
     isBookUpdate: require('./async/isBookUpdate'),
     update: require('./async/update'),
   },
-  obs: {
-    authors: require('./obs/authors'),
-    book: require('./obs/book'),
-    shelves: require('./obs/shelves'),
-  },
-  pull: {
-    books: require('./pull/books'),
-    comments: require('./pull/comments'),
-    updates: require('./pull/updates'),
-  },
+  // obs: {
+  //   authors: require('./obs/authors'),
+  //   book: require('./obs/book'),
+  //   shelves: require('./obs/shelves'),
+  // },
+  // pull: {
+  //   books: require('./pull/books'),
+  //   comments: require('./pull/comments'),
+  //   updates: require('./pull/updates'),
+  // },
   sync: {
-    isBook: require('./isBook'), // << exception
+    isBook: require('./sync/isBook'),
   }
 }
 
@@ -38,7 +38,6 @@ function inject (client, methods) {
     if (typeof methods[key] === 'function') {
       methods[key] = methods[key](client)
 
-      // TODO skip isBook
     }
     else {
       methods[key] = inject(client, methods[key])

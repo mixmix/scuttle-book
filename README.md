@@ -118,7 +118,7 @@ favBook()
 ```js
 {
   title:       String,
-  authors:     String,
+  authors:     String | Array,
   description: String,
   image:       Blob,
   series:      String,
@@ -149,7 +149,7 @@ A new book:
 {
   type:       'bookclub',
   title:       String,
-  authors:     String,
+  authors:     String | Array,
   description: String,  (optional)
   image:       Blob,    (optional)
   series:      String,  (optional)

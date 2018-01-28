@@ -3,7 +3,7 @@ const validator = require('is-my-json-valid')
 
 const isBook = require('../isBook.js')
 
-test('book schema', t => {
+test('isBoot / book schema', t => {
 
   const simpleBook = {
     type: 'bookclub',

@@ -4,7 +4,7 @@
   "description": "a scuttlebutt helper for all book related messages",
   "main": "index.js",
   "scripts": {
-    "test": "tape **/*.test.js | tap-spec"
+    "test": "tape tests/**/*.js | tap-spec"
   },
   "repository": {
     "type": "git",

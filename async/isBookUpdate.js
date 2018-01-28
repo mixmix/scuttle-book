@@ -1,5 +1,5 @@
 const validator = require('is-my-json-valid')
-const schema = require('../schemas/bookUpdate')
+const schema = require('../schema/bookUpdate')
 
 module.exports = validator(schema)
 

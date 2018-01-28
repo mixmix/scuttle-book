@@ -1,4 +1,4 @@
-module.exports = function (client) {
+module.exports = function (server) {
   return function (id, text, cb) {
     // lookup the book and existing messages attached (just comments?)
     // calculate the correct branch (using ssb-sort ?)

@@ -1,8 +1,8 @@
 const validator = require('is-my-json-valid')
-const schema = require('../schemas/book')
+const schema = require('../schema/book')
 
-// client is not used here. Closure pattern is just for consistency of use with other functions.
-module.exports = function (client) {
+// server is not used here. Closure pattern is just for consistency of use with other functions.
+module.exports = function (server) {
   const isBookContent = validator(schema, {verbose: true})
 
   return function isBook (obj) {

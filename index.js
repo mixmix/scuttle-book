@@ -6,14 +6,15 @@ const methods = {
     create: require('./async/create'),
     // get: require('./async/get'),
     // isBookComment: require('./async/isBookComment'),
+    // isBookKey: require('./async/isBookKey'),
     // isBookUpdate: require('./async/isBookUpdate'),
     // update: require('./async/update'),
   },
-  // obs: {
-  //   authors: require('./obs/authors'),
-  //   book: require('./obs/book'),
-  //   shelves: require('./obs/shelves'),
-  // },
+  obs: {
+    // authors: require('./obs/authors'),
+    get: require('./obs/get'),
+    // shelves: require('./obs/shelves'),
+  },
   // pull: {
   //   books: require('./pull/books'),
   //   comments: require('./pull/comments'),

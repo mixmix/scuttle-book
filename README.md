@@ -11,7 +11,7 @@ The parts of this modules are :
 
 ```js
 const Book = require('scuttle-book')
-const book = Book(client)   // an ssb-client (sbot)
+const book = Book(server)   // server is sometimes called sbot
 
 const newBook = {
   title: 'The Dispossessed',
@@ -29,9 +29,9 @@ book.async.create(newBook, (err, bookMsg) => {
 
 ## Constructor API
 
-### `Book(client, opts)`
+### `Book(server, opts)`
 
-`client` an ssb-client instance (sometimes called sbot in other docs).
+`server` is a connection to your scuttlebutt server provided by `ssb-client` (sometimes called sbot in other docs).
 
 `opts` (options) an Object with over-ride options for the scuttle-book instance: 
 
@@ -52,14 +52,14 @@ book.async.create(newBook, (err, bookMsg) => {
 
 ### `book.async.create(book, cb)`
 
-`book` - an Object which must at least have `title`, `author`
+`book` - an Object which must at least have `title`, `author`. If a book doesn't pass the `isBook` validator, the callback is called with the errors : `cb(errors)`
 
 ### `book.async.update(id, attributes, cb)`
 ### `book.async.comment(id, text, cb)`
 
 ### `book.sync.isBook(bookMsg)`
 
-Checks if a given message is a valid book message.
+Checks if a given message is a valid book message, where a 'message' can be either a raw message from the database or `msg.value.content`.
 
 This method doesn't need an sbot connection so can be accessed directly like:
 
@@ -67,9 +67,10 @@ This method doesn't need an sbot connection so can be accessed directly like:
 const isBook = require('scuttle-book/isBook')
 ```
 
-### `book.async.isBook(id, cb)`
 
-Looks up an id to see if it's a valid book message.
+### `book.async.isBookKey(key, cb)`
+
+Looks up a `key` to see if it belongs to a valid book message.
 
 
 ### `book.async.isBookUpdate(aboutMsg, cb)`
@@ -92,12 +93,12 @@ A stream of comments on books
 
 A stream of updates on books. You can filter this yourself to pull out just ratings, or description updates etc).
 
-### `book.obs.get(id)`
+### `book.obs.get(key)`
 
 Returns an observeable which provides live updating data for a particular book.
 
 ```js
-var favBook = book.obs.book('%A4RPANAIiCtO9phwbL0tqk9ta4ltzzZwECZjsH25rqY=.sha256"')
+var favBook = book.obs.get('%A4RPANAIiCtO9phwbL0tqk9ta4ltzzZwECZjsH25rqY=.sha256"')
 
 favBook( function listener (newBookState) {
   // this function is passed the newBookState whenever there's an update
@@ -105,6 +106,11 @@ favBook( function listener (newBookState) {
 
 favBook()
 // => get the state right now
+
+```
+
+state has form:
+```js
 // {
 //   key: '%A4RPANAIiCtO9phwbL0tqk9ta4ltzzZwECZjsH25rqY=.sha256',
 //   value: {  },          // the original message content
@@ -114,7 +120,7 @@ favBook()
 // }
 ```
 
-`attributes`:
+where `attributes` and `latestAttributes`:
 ```js
 {
   title:       String,
@@ -132,7 +138,7 @@ favBook()
 }
 ```
 
-### `book.async.get(id, cb)`
+### `book.async.get(key, cb)`
 
 Similar to `book.obs.get` but an asynchronous method for e.g. backend rendering.
 
@@ -187,3 +193,11 @@ Commenting on a book:
   branch: String | Array
 }
 ```
+
+## Development
+
+Run the tests with `npm test`
+
+Some tests require an sbot to be running and currently use your personal identity to read real books.
+TODO - build a test harness with an in-memory db.
+

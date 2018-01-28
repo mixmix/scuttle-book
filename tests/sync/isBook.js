@@ -1,7 +1,8 @@
 const test = require('tape')
 const validator = require('is-my-json-valid')
 
-const isBook = require('../isBook.js')
+const isBook = require('../../sync/isBook')()
+// or const isBook = require('../../isBook')
 
 test('isBoot / book schema', t => {
 

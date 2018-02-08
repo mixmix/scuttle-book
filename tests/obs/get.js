@@ -1,36 +1,68 @@
 const test = require('tape')
-const Client = require('ssb-client')
+const Server = require('scuttle-testbot')
+const ssbKeys = require('ssb-keys')
 const { watch } = require('mutant')
 const { isBlob } = require('ssb-ref')
+const pull = require('pull-stream')
+
+const keyMe = ssbKeys.generate()
+const keyOther = ssbKeys.generate()
+
+Server.use(require('ssb-about'))
+
+
 const Get = require('../../obs/get')
 
-test('obs.get', t => {
-  Client((err, server) => {
-    if (err) throw err
+test('obs.get - I publish a book and edit it', t => {
+  const server = Server({name: 'test.obs.get', keys: keyMe})
+  const get = Get(server)
 
-    const get = Get(server)
+  const feedMe = server.createFeed(keyMe)
+  const feedOther = server.createFeed(keyOther)
 
-    const key = '%0ANsrEUsgCEzA+mVHgFH+oX2aHa3vHdSSIqW27moJNk=.sha256'
-    const postedBy = '@ye+QM09iPcDJD6YvQYjoQc7sLF/IFhmNbEqgdzQo3lQ=.ed25519'
-    // The Dispossessed, posted by mix : @ye+QM09iPcDJD6YvQYjoQc7sLF/IFhmNbEqgdzQo3lQ=.ed25519
+  const book = {type: 'bookclub', title: 'The Disposessed', author: 'Ursula Le Guin'}
 
-    const book = get(key)
+  const bookEdits = [ 
+    { edit: {type: 'about', title: 'The Dispossessed' }, publish: feedMe.add }, // fix double letter spelling error
+    { edit: {type: 'about', title: 'The Dispossessed: an ambiguous utopia' }, publish: feedOther.add } // another opinion about title
+  ]
 
-    // book(state => console.log('***UPDATE***', '\n', state, '\n', '\n'))
 
-    watch(book.sync, (done) => {
-      if (!done) return
+  feedMe.add(book, (err, bookMsg) => {
+    var bookKey = bookMsg.key
 
-      const myAttributes = book.latestAttributes.get(postedBy)
-      t.equal(myAttributes.authors, 'Ursula Le Guin', "collects mix's opinion about author")
-      t.equal(myAttributes.title, 'The Disposessed', "collects mix's opinion about title")
-      t.ok(isBlob(myAttributes.image), "collects mix's opinion about image")
+    var step = 0
 
-      server.close()
-      t.end()
+    watch(get(bookKey), bookState => {
+      console.log(`step ${step}`, bookState)
+
+      switch (step) {
+        case 0:
+          // t.deepEqual(bookState.latestAttributes.title[keyMe.id][0], 'The Disposessed', 'publish: get latestAttribute')
+          break
+        case 1:
+          t.deepEqual(bookState.latestAttributes.title[keyMe.id][0], 'The Dispossessed', '1 edit: get latestAttribute')
+          t.deepEqual(bookState.attributes, { title: 'The Disposessed', author: 'Ursula Le Guin' }, '1 edit: get attributes')
+          break
+        case 2:
+          console.log('dog')
+          server.close()
+          t.end()
+      }
+      console.log('step increment')
+      step++
     })
-  })
 
+    pull(
+      pull.values(bookEdits),
+      pull.asyncMap((action, cb) => {
+        const edit = Object.assign(action.edit, { about: bookKey })
+        action.publish(edit, cb)
+      }),
+      pull.drain(val => {
+      })
+    )
+  })
 })
 
 

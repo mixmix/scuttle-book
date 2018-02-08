@@ -28,20 +28,22 @@ const methods = {
 // Note : if you don't like this export pattern, there's no reason we can't add different mappings !!
 //  e.g. book.validate.bookComment
 
-module.exports = function Book (client, opts) {
-  return inject(client, methods)
+module.exports = function Book (server, opts) {
+  if (!server.about) throw new Error('scuttle-book requires you to have the ssb-about plugin installed')
+
+  return inject(server, methods)
 }
 
 
-// auto-inject the ssb-client instance to all methods to reduce repition
-function inject (client, methods) {
+// auto-inject the ssb-server to all methods to reduce repitition
+function inject (server, methods) {
   for (var key in methods) {
     if (typeof methods[key] === 'function') {
-      methods[key] = methods[key](client)
+      methods[key] = methods[key](server)
 
     }
     else {
-      methods[key] = inject(client, methods[key])
+      methods[key] = inject(server, methods[key])
     }
   }
 
